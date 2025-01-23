@@ -1,0 +1,53 @@
+formatter: markdown table
+
+output-values:
+  enabled: false
+  from: ""
+
+sort:
+  enabled: true
+  by: name
+
+output:
+  file: README.md
+  mode: inject
+
+settings:
+  color: true
+  escape: true
+  hide-empty: true
+  indent: 2
+  required: false
+  sensitive: true
+
+content: |-
+  {{ .Requirements }}
+
+  {{ .Providers }}
+
+  {{ .Resources }}
+
+  ## Examples
+
+  1. Manual VPC CIDR allocation, with manual subnet layer allocation, where subnet layers are sliced per Availability Zone  
+  ```hcl
+  {{ include "examples/manual_vpc_manual_subnets.tf" }}
+  ```  
+
+  2. Manual VPC CIDR allocation, with dynamic subnet layer allocation, where subnet layers are sliced per Availability Zone  
+  ```hcl
+  {{ include "examples/manual_vpc_dynamic_subnets.tf" }}
+  ```  
+
+  3. AWS IPAM allocated VPC CIDR with dynamic subnet allocation.  
+  ```hcl
+  {{ include "examples/ipam_vpc_dynamic_subnets.tf" }}
+  ```  
+
+  ## Argument Reference
+
+  {{ include "examples/arguments.md" }}
+
+  {{ .Inputs }}
+
+  {{ .Outputs }}
