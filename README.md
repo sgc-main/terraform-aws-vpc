@@ -71,6 +71,7 @@ Terraform module which deploys an AWS VPC
 | [aws_route_table.pubrt](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
 | [aws_route_table_association.associations](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
 | [aws_security_group.sg-r53ept-inbound](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group.vpc_endpoints](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_subnet.subnets](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
 | [aws_vpc.main_vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
 | [aws_vpc_dhcp_options.dhcp-opt](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_dhcp_options) | resource |
@@ -117,7 +118,7 @@ variable "vpc-cidrs" {
 
 variable "name-vars" {
   default = {
-    account = "geek37"
+    account = "tst"
     name    = "dev"
   }
 }
@@ -173,7 +174,7 @@ variable zones {
 
 variable name-vars {
   default = {
-    account = "geek37"
+    account = "tst"
     name    = "dev"
   }
 }
@@ -270,8 +271,8 @@ variable tags {
       variable "name-vars" {
         type = map(string)
         default = {
-          account = "geek37"
-          name = "dev"
+          account = "tst"
+          name    = "dev"
         }
       }
    ```
@@ -295,9 +296,9 @@ variable tags {
    variable "route53_resolver_rules" {
      default =[
        {
-          domain_name = "geek37.com"
+          domain_name = "tst.com"
           rule_type   = "FORWARD"
-          name        = "geek37_com"
+          name        = "tst_com"
           target_ip   = {
             us-east-1 = [
               {
@@ -310,7 +311,7 @@ variable tags {
             ]
           }
           tags        = {
-            example   = "Geek37.com DNS Forwarder"
+            example   = "tst.com DNS Forwarder"
           }
        }
      ]
@@ -328,17 +329,13 @@ variable tags {
      }))
      default = [
         {
-            name                = "storage-gateway-endpoint"
             subnets             = ["mgt"]
-            service             = "com.amazonaws.<REGION>.storagegateway"
-            security_group      = "sg-123456789"
+            service             = "storage-gateway"
             private_dns_enabled = true
         },
         {
-            name                = "execute-api-endpoint"
             subnet              = ["subnet-1234567890abcdef12"]
-            service             = "com.amazonaws.<REGION>.execute-api"
-            security_group      = "sg-123456789|sg-987654321"
+            service             = "execute-api"
             private_dns_enabled = true
         }
       ]
@@ -427,7 +424,7 @@ variable tags {
 | <a name="input_override_default_security_group"></a> [override\_default\_security\_group](#input\_override\_default\_security\_group) | Optional : Takes over the rule set of the VPC's default Security Group and removes all rules. Defaults false. | `bool` | `true` |
 | <a name="input_peer_accepter"></a> [peer\_accepter](#input\_peer\_accepter) | Optional : Map of maps of Peer Link accepters. The key is the name and the elements of the individual maps are vpc\_peering\_connection\_id, peer\_cidr\_blocks (list), allow\_remote\_vpc\_dns\_resolution. | <pre>map(object({<br/>    vpc_peering_connection_id       = string<br/>    peer_cidr_blocks                = list(string)<br/>    allow_remote_vpc_dns_resolution = bool<br/>  }))</pre> | `{}` |
 | <a name="input_peer_requester"></a> [peer\_requester](#input\_peer\_requester) | Optional : Map of maps of Peer Link requestors. The key is the name and the elements of the individual maps are peer\_owner\_id, peer\_vpc\_id, peer\_cidr\_blocks (list), and allow\_remote\_vpc\_dns\_resolution. | <pre>map(object({<br/>    peer_owner_id                   = string<br/>    peer_vpc_id                     = string<br/>    peer_cidr_blocks                = list(string)<br/>    allow_remote_vpc_dns_resolution = bool<br/>  }))</pre> | `{}` |
-| <a name="input_private_endpoints"></a> [private\_endpoints](#input\_private\_endpoints) | Optional : List of Maps for private AWS Endpoints Keys: name[Name of Resource IE: s3-endpoint], service[The Service IE: com.amazonaws.<REGION>.execute-api, <REGION> will be replaced with VPC Region], List of security\_group IDs, List of subnet layers or Subnet IDs to deploy interfaces to. When layer is used all subnets in each layer will be used. This can cause errors if the endpoint is not available in the AZ. Use subnet IDs if this happens. | <pre>list(object({<br/>    name                = string<br/>    subnets             = list(string)<br/>    service             = string<br/>    security_groups     = list(string)<br/>    private_dns_enabled = bool<br/>  }))</pre> | `[]` |
+| <a name="input_private_endpoints"></a> [private\_endpoints](#input\_private\_endpoints) | Optional : List of Maps for private AWS Endpoints Keys: service[The Service IE: execute-api, com.amazonaws and region will be added by the module], List of security\_group IDs, List of subnet layers or Subnet IDs to deploy interfaces to. When layer is used all subnets in each layer will be used. This can cause errors if the endpoint is not available in the AZ. Use subnet IDs if this happens. | <pre>list(object({<br/>    subnets             = list(string)<br/>    service             = string<br/>    private_dns_enabled = bool<br/>    security_group      = optional(list(string))<br/>  }))</pre> | `[]` |
 | <a name="input_pub_layer"></a> [pub\_layer](#input\_pub\_layer) | Optional : Specifies the name of the public layer. Defaults to pub. | `string` | `"pub"` |
 | <a name="input_region"></a> [region](#input\_region) | Optional : The AWS Region to deploy the VPC to. Defaults to us-east-1 | `string` | `"us-east-1"` |
 | <a name="input_reserve_azs"></a> [reserve\_azs](#input\_reserve\_azs) | Optional : The number of subnets to compute the IP allocations for. If greater than the existing numnber of availbility zones in the zones list it will reserve space for additional subnets if less then it will only allocate for the existing AZs. The default is 0. | `number` | `0` |
@@ -442,7 +439,7 @@ variable tags {
 | <a name="input_transit_gateway_routes"></a> [transit\_gateway\_routes](#input\_transit\_gateway\_routes) | Optional : specify the list of CIDR blocks to route to the Transit Gateway. | `list(string)` | `[]` |
 | <a name="input_txgw_layer"></a> [txgw\_layer](#input\_txgw\_layer) | Optional : Specifies the name of the layer to connect the TXGW to. Defaults to mgt. | `string` | `"mgt"` |
 | <a name="input_vpc-cidrs"></a> [vpc-cidrs](#input\_vpc-cidrs) | Required : List of CIDRs to apply to the VPC. | `list(string)` | <pre>[<br/>  "0.0.0.0/0"<br/>]</pre> |
-| <a name="input_vpc-name"></a> [vpc-name](#input\_vpc-name) | Optional : Override the calculated VPC name | `string` | `"null"` |
+| <a name="input_vpc-name"></a> [vpc-name](#input\_vpc-name) | Optional : Override the calculated VPC name | `string` | `null` |
 | <a name="input_vpn_connections"></a> [vpn\_connections](#input\_vpn\_connections) | Optional : A map of a map with the settings for each VPN.  The key will be the name of the VPN | `map` | `{}` |
 | <a name="input_zones"></a> [zones](#input\_zones) | Optional : AWS Regions and Availability Zones | `map(list(string))` | <pre>{<br/>  "ap-northeast-1": [<br/>    "ap-northeast-1a",<br/>    "ap-northeast-1b",<br/>    "ap-northeast-1c"<br/>  ],<br/>  "ap-northeast-2": [<br/>    "ap-northeast-2a",<br/>    "ap-northeast-2b",<br/>    "ap-northeast-2c"<br/>  ],<br/>  "ap-south-1": [<br/>    "ap-south-1a",<br/>    "ap-south-1b",<br/>    "ap-south-1c"<br/>  ],<br/>  "ap-southeast-1": [<br/>    "ap-southeast-1a",<br/>    "ap-southeast-1b",<br/>    "ap-southeast-1c"<br/>  ],<br/>  "ap-southeast-2": [<br/>    "ap-southeast-2a",<br/>    "ap-southeast-2b",<br/>    "ap-southeast-2c"<br/>  ],<br/>  "ca-central-1": [<br/>    "ca-central-1a",<br/>    "ca-central-1b",<br/>    "ca-central-1d"<br/>  ],<br/>  "cn-north-1": [<br/>    "cn-north-1a",<br/>    "cn-north-1b"<br/>  ],<br/>  "cn-northwest-1": [<br/>    "cn-northwest-1a",<br/>    "cn-northwest-1b",<br/>    "cn-northwest-1c"<br/>  ],<br/>  "eu-central-1": [<br/>    "eu-central-1a",<br/>    "eu-central-1b",<br/>    "eu-central-1c"<br/>  ],<br/>  "eu-west-1": [<br/>    "eu-west-1a",<br/>    "eu-west-1b",<br/>    "eu-west-1c"<br/>  ],<br/>  "eu-west-2": [<br/>    "eu-west-2a",<br/>    "eu-west-2b",<br/>    "eu-west-2c"<br/>  ],<br/>  "sa-east-1": [<br/>    "sa-east-1a",<br/>    "sa-east-1b",<br/>    "sa-east-1c"<br/>  ],<br/>  "us-east-1": [<br/>    "us-east-1a",<br/>    "us-east-1b",<br/>    "us-east-1c"<br/>  ],<br/>  "us-east-2": [<br/>    "us-east-2a",<br/>    "us-east-2b",<br/>    "us-east-2c"<br/>  ],<br/>  "us-gov-east-1": [<br/>    "us-gov-east-1a",<br/>    "us-gov-east-1c",<br/>    "us-gov-east-1b"<br/>  ],<br/>  "us-gov-west-1": [<br/>    "us-gov-west-1a",<br/>    "us-gov-west-1c",<br/>    "us-gov-west-1b"<br/>  ],<br/>  "us-west-1": [<br/>    "us-west-1a",<br/>    "us-west-1b",<br/>    "us-west-1c"<br/>  ],<br/>  "us-west-2": [<br/>    "us-west-2a",<br/>    "us-west-2b",<br/>    "us-west-2c"<br/>  ]<br/>}</pre> |
 

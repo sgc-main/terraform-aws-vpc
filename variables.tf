@@ -1,101 +1,88 @@
-variable "region" {
+variable region {
   description = "Optional : The AWS Region to deploy the VPC to. Defaults to us-east-1"
   type        = string
   default     = "us-east-1"
 }
 
-#variable "vpc-cidrs" {
-#  description = "Required : List of CIDRs to apply to the VPC."
-#  type        = list(string)
-#  default     = ["10.0.0.0/21"]
-#
-#  validation {
-#    condition = (
-#      length(var.vpc-cidrs) >= 1
-#    )
-#    error_message = "The instance_tenancy is not valid."
-#  }
-#}
-
-variable "vpc-cidrs" {
+variable vpc-cidrs {
   description = "Required : List of CIDRs to apply to the VPC."
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
 
-variable "ipv4_ipam_pool_id" {
+variable ipv4_ipam_pool_id {
   description = "(Optional) The ID of an IPv4 IPAM pool you want to use for allocating this VPC's CIDR."
   type        = string
   default     = null
 }
 
-variable "ipam_netmask_length" {
+variable ipam_netmask_length {
   description = "(Optional) The length of the IPv4 IPAM generated CIDR you want to allocate to this VPC."
   type        = number
   default     = null
 }
 
-variable "override_default_security_group" {
+variable override_default_security_group {
   description = "Optional : Takes over the rule set of the VPC's default Security Group and removes all rules. Defaults false."
   type        = bool
   default     = true
 }
 
-variable "enable_dns_hostnames" {
+variable enable_dns_hostnames {
   description = "Optional : A boolean flag to enable/disable DNS hostnames in the VPC. Defaults true."
   type        = bool
   default     = true
 }
 
-variable "enable_route53_reverse_zones" {
+variable enable_route53_reverse_zones {
   description = "Optional : A boolean flag to enable/disable creation of reverse DNS zones for all /24 networks in the VPC. Anything smaller than a /24 will be ignored. Default is false"
   type        = bool
   default     = false
 }
 
-variable "enable_route53_shared_resolver_rules" {
+variable enable_route53_shared_resolver_rules {
   description = "Optional : Enable Route53 resolver rule associations. Defaults to false"
   type        = bool
   default     = false
 }
 
-variable "exclude_resolver_rule_ids" {
+variable exclude_resolver_rule_ids {
   description = "Optional : A list of resolve rule IDs to exclude from the resolve rule associations."
   type        = list(string)
   default     = []
 }
 
-variable "route53_resolver_endpoint_cidr_blocks" {
+variable route53_resolver_endpoint_cidr_blocks {
   description = "Optional : A list of the source CIDR blocks to allow to commuicate with the Route53 Resolver Endpoint. Defaults 0.0.0.0/0."
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
 
-variable "route53_resolver_endpoint_subnet" {
+variable route53_resolver_endpoint_subnet {
   description = "Optional : The subnet to install Route53 Resolver Endpoint , the default is mgt but must exist as a key in the variable subnets."
   type        = string
   default     = "mgt"
 }
 
-variable "enable_route53_inbound_endpoint" {
+variable enable_route53_inbound_endpoint {
   description = "Optional : A boolean flag to enable/disable Route53 Resolver Endpoint. Defaults false."
   type        = bool
   default     = false
 }
 
-variable "enable_route53_outbound_endpoint" {
+variable enable_route53_outbound_endpoint {
   description = "Optional : A boolean flag to enable/disable Route53 Outbound Endpoint. Defaults false."
   type        = bool
   default     = false
 }
 
-variable "default_r53_resolver_target_ip_region" {
+variable default_r53_resolver_target_ip_region {
   description = "Optional : The default region to use to determine the IP addresses in the R53 Resolver Rules target_ip map."
   type        = string
   default     = "us-east-1"
 }
 
-variable "route53_resolver_rules" {
+variable route53_resolver_rules {
   description = "Optional : List of Route53 Resolver Rules"
   /*type        = list{object(
     domain_name = string
@@ -110,7 +97,7 @@ variable "route53_resolver_rules" {
   default = []
 }
 
-variable "default_route53_resolver_rules" {
+variable default_route53_resolver_rules {
   description = "Do not use : This defines the default values for each map entry in route53_resolver_rules. Do not override this."
   /*type       = map(object({
     rule_type = string
@@ -127,13 +114,13 @@ variable "default_route53_resolver_rules" {
   }
 }
 
-variable "enable_dns_support" {
+variable enable_dns_support {
   description = "Optional : A boolean flag to enable/disable DNS support in the VPC. Defaults true."
   type        = bool
   default     = true
 }
 
-variable "instance_tenancy" {
+variable instance_tenancy {
   description = "Optional : A tenancy option for instances launched into the VPC. Default is default, which makes your instances shared on the host. Using either of the other options (dedicated or host) costs at least $2/hr."
   type        = string
   default     = "default"
@@ -146,19 +133,19 @@ variable "instance_tenancy" {
   }
 }
 
-variable "tags" {
+variable tags {
   description = "Optional : A map of tags to assign to the resource."
   type        = map(string)
   default     = {}
 }
 
-variable "vpc-name" {
+variable vpc-name {
   description = "Optional : Override the calculated VPC name"
   type        = string
-  default     = "null"
+  default     = null
 }
 
-variable "name-vars" {
+variable name-vars {
   description = "Required : Map with two keys account and name. Names of elements are created based on these values."
   type        = map(string)
 
@@ -171,73 +158,73 @@ variable "name-vars" {
   }
 }
 
-variable "resource-tags" {
+variable resource-tags {
   description = "Optional : A map of maps of tags to assign to specifc resources. This can be used to override globally specified or calculated tags such as the name. The key must be one of the following: aws_vpc, aws_vpn_gateway, aws_subnet, aws_network_acl, aws_internet_gateway, aws_cloudwatch_log_group, aws_vpc_dhcp_options, aws_route_table, aws_route53_resolver_endpoint, aws_lb."
   type        = map(map(string))
   default     = {}
 }
 
-variable "domain_name" {
+variable domain_name {
   description = "Optional : the suffix domain name to use by default when resolving non Fully Qualified Domain Names. In other words, this is what ends up being the search value in the /etc/resolv.conf file."
   type        = string
   default     = "ec2.internal"
 }
 
-variable "domain_name_servers" {
+variable domain_name_servers {
   description = "Optional : List of name servers to configure in /etc/resolv.conf. The default is the AWS nameservers AmazonProvidedDNS."
   type        = list(string)
   default     = ["AmazonProvidedDNS"]
 }
 
-variable "ntp_servers" {
+variable ntp_servers {
   description = "Optional : List of NTP servers to configure. The default is an emppty list."
   type        = list(string)
   default     = []
 }
 
-variable "dx_gateway_id" {
+variable dx_gateway_id {
   description = "Optional : specify the Direct Connect Gateway ID to associate the VGW with."
   type        = string
   default     = "null"
 }
 
-variable "transit_gateway_id" {
+variable transit_gateway_id {
   description = "Optional : specify the Transit Gateway ID within the same account to associate the VPC with."
   type        = string
   default     = "null"
 }
 
-variable "transit_gateway_routes" {
+variable transit_gateway_routes {
   description = "Optional : specify the list of CIDR blocks to route to the Transit Gateway."
   type        = list(string)
   default     = []
 }
 
-variable "txgw_layer" {
+variable txgw_layer {
   description = "Optional : Specifies the name of the layer to connect the TXGW to. Defaults to mgt."
   type        = string
   default     = "mgt"
 }
 
-variable "appliance_mode_support" {
+variable appliance_mode_support {
   description = "(Optional) : Whether Appliance Mode support is enabled. If enabled, a traffic flow between a source and destination uses the same Availability Zone for the VPC attachment for the lifetime of that flow. Valid values: disable, enable. Default value: disable."
   type        = string
   default     = "disable"
 }
 
-variable "pub_layer" {
+variable pub_layer {
   description = "Optional : Specifies the name of the public layer. Defaults to pub."
   type        = string
   default     = "pub"
 }
 
-variable "reserve_azs" {
+variable reserve_azs {
   description = "Optional : The number of subnets to compute the IP allocations for. If greater than the existing numnber of availbility zones in the zones list it will reserve space for additional subnets if less then it will only allocate for the existing AZs. The default is 0."
   type        = number
   default     = 0
 }
 
-variable "subnets" {
+variable subnets {
   description = "Optional : Keys are used for subnet names and values are the subnets for the various layers. These will be divided by the number of AZs based on ceil(log(length(var.zones[var.region]),2)). 'pub' is the only special name used for the public subnet and must be specified first."
   type        = map(string)
   default = {
@@ -249,19 +236,19 @@ variable "subnets" {
   }
 }
 
-variable "fixed-subnets" {
+variable fixed-subnets {
   description = "Optional : Keys must match keys in subnets and values are the list of subnets for each AZ. The number of subnets specified in each list needs to match the number of AZs. 'pub' is the only special name used."
   type        = map(list(string))
   default     = {}
 }
 
-variable "fixed-subnets-only" {
+variable fixed-subnets-only {
   description = "Optional : Allows the use of fixed subnets only, ignoring the subnets variable"
   type        = bool
   default     = false
 }
 
-variable "fixed-name" {
+variable fixed-name {
   description = "Optional : Keys must match keys in subnets and values are the name of subnets for each AZ. The number of subnets specified in each list needs to match the number of AZs. 'pub' is the only special name used."
   type        = map(list(string))
   default     = {}
@@ -273,7 +260,7 @@ variable dynamic-vpc-cidr {
   default     = null
 }
 
-variable "dynamic-subnet-symentric-newbits" {
+variable dynamic-subnet-symentric-newbits {
   description = "Optional : Switch between symetric subnetting (every subnet same size) and Four Subnets / 3 AZs cascading subnetting."
   type        = bool
   default     = true
@@ -292,25 +279,25 @@ variable dyanmic-subnets-newbits {
 }
 
 
-variable "subnet-tags" {
+variable subnet-tags {
   description = "Optional : A map of maps of tags to assign to specifc subnet resource.  The key but be the same as the key in variable subnets."
   type        = map(map(string))
   default     = {}
 }
 
-variable "block_tcp_ports" {
+variable block_tcp_ports {
   description = "Optional : Ports to block both inbound and outbound in the Public Subnet NACL."
   type        = list(string)
   default     = ["20-21", "22", "23", "53", "137-139", "445", "1433", "1521", "3306", "3389", "5439", "5432"]
 }
 
-variable "block_udp_ports" {
+variable block_udp_ports {
   description = "Optional : Ports to block both inbound and outbound in the Public Subnet NACL."
   type        = list(string)
   default     = ["53"]
 }
 
-variable "network_acl_rules" {
+variable network_acl_rules {
   description = "Optional : Map of Map of ingress or egress rules to add to Public Subnet's NACL."
   type = map(object({
     rule_number = number
@@ -325,73 +312,73 @@ variable "network_acl_rules" {
   default = {}
 }
 
-variable "deploy_natgateways" {
+variable deploy_natgateways {
   description = "Optional : Set to true to deploy NAT gateways if pub subnet is created. Defaults to false."
   type        = bool
   default     = false
 }
 
-variable "enable_pub_route_propagation" {
+variable enable_pub_route_propagation {
   description = "Optional : A boolean flag that indicates that the routes should be propagated to the pub routing table. Defaults to False."
   type        = bool
   default     = false
 }
 
-variable "enable_flowlog" {
+variable enable_flowlog {
   description = "Optional : A boolean flag to enable/disable VPC flowlogs."
   type        = bool
   default     = false
 }
 
-variable "flow_log_destination_type" {
+variable flow_log_destination_type {
   description = "Optional : Type of flow log destination. Can be s3 or cloud-watch-logs. Defaults to S3."
   type        = string
   default     = "s3"
 }
 
-variable "flow_log_traffic_type" {
+variable flow_log_traffic_type {
   description = "Optional : The type of traffic to capture. Valid values: ACCEPT, REJECT, ALL."
   type        = string
   default     = "ALL"
 }
 
-variable "flow_log_max_aggregation_interval" {
+variable flow_log_max_aggregation_interval {
   description = "Optional : The maximum interval of time during which a flow of packets is captured and aggregated into a flow log record. Valid Values: `60` seconds or `600` seconds. Defaults to 600."
   type        = number
   default     = 600
 }
 
-variable "cloudwatch_retention_in_days" {
+variable cloudwatch_retention_in_days {
   description = "Optional : Number of days to keep logs within the cloudwatch log_group. The default is 7 days."
   type        = number
   default     = 7
 }
 
-variable "flow_log_format" {
+variable flow_log_format {
   description = "Optional : VPC flow log format."
   type        = string
   default     = "$${version} $${account-id} $${interface-id} $${srcaddr} $${dstaddr} $${srcport} $${dstport} $${protocol} $${packets} $${bytes} $${start} $${end} $${action} $${log-status} $${vpc-id} $${subnet-id} $${instance-id} $${tcp-flags} $${type} $${pkt-srcaddr} $${pkt-dstaddr} $${region} $${az-id} $${sublocation-type} $${sublocation-id} $${pkt-src-aws-service} $${pkt-dst-aws-service} $${flow-direction} $${traffic-path}"
 }
 
-variable "flow_log_filter" {
+variable flow_log_filter {
   description = "Optional : CloudWatch subscription filter to match flow logs."
   type        = string
   default     = ""
 }
 
-variable "flow_log_destination_arn" {
+variable flow_log_destination_arn {
   description = "Optional : Required if enable_flowlog = true and destination type s3. The ARN of the CloudWatch log group or S3 bucket where VPC Flow Logs will be pushed. If this ARN is a S3 bucket the appropriate permissions need to be set on that bucket's policy. When create_flow_log_cloudwatch_log_group is set to false this argument must be provided."
   type        = string
   default     = ""
 }
 
-variable "aws_lambda_function_name" {
+variable aws_lambda_function_name {
   description = "Optional : Lambda function name to call when sending logs to an external SEIM from CloudWatch. This is ignored if sending logs to S3."
   type        = string
   default     = "null"
 }
 
-variable "flow_log_file_format" {
+variable flow_log_file_format {
   description = "(Optional) The format for the flow log. Valid values: `plain-text`, `parquet`."
   type        = string
   default     = "plain-text"
@@ -402,13 +389,13 @@ variable "flow_log_file_format" {
   }
 }
 
-variable "flow_log_hive_compatible_partitions" {
+variable flow_log_hive_compatible_partitions {
   description = "(Optional) Indicates whether to use Hive-compatible prefixes for flow logs stored in Amazon S3."
   type        = bool
   default     = false
 }
 
-variable "flow_log_per_hour_partition" {
+variable flow_log_per_hour_partition {
   description = "(Optional) Indicates whether to partition the flow log per hour. This reduces the cost and response time for queries."
   type        = bool
   default     = false
@@ -416,43 +403,42 @@ variable "flow_log_per_hour_partition" {
 
 
 
-variable "amazonaws-com" {
+variable amazonaws-com {
   description = "Optional : Ability to change principal for flowlogs from amazonaws.com to amazonaws.com.cn."
   type        = string
   default     = "amazonaws.com"
 }
 
-variable "enable-s3-endpoint" {
+variable enable-s3-endpoint {
   description = "Optional : Enable the S3 Endpoint"
   type        = bool
   default     = false
 }
 
-variable "enable-dynamodb-endpoint" {
+variable enable-dynamodb-endpoint {
   description = "Optional : Enable the DynamoDB Endpoint"
   type        = bool
   default     = false
 }
 
-variable "private_endpoints" {
-  description = "Optional : List of Maps for private AWS Endpoints Keys: name[Name of Resource IE: s3-endpoint], service[The Service IE: com.amazonaws.<REGION>.execute-api, <REGION> will be replaced with VPC Region], List of security_group IDs, List of subnet layers or Subnet IDs to deploy interfaces to. When layer is used all subnets in each layer will be used. This can cause errors if the endpoint is not available in the AZ. Use subnet IDs if this happens."
+variable private_endpoints {
+  description = "Optional : List of Maps for private AWS Endpoints Keys: service[The Service IE: execute-api, com.amazonaws and region will be added by the module], List of security_group IDs, List of subnet layers or Subnet IDs to deploy interfaces to. When layer is used all subnets in each layer will be used. This can cause errors if the endpoint is not available in the AZ. Use subnet IDs if this happens."
   type = list(object({
-    name                = string
     subnets             = list(string)
     service             = string
-    security_groups     = list(string)
     private_dns_enabled = bool
+    security_group      = optional(list(string))
   }))
   default = []
 }
 
-variable "enable_vpn_gateway" {
+variable enable_vpn_gateway {
   description = "Optional : Create a new VPN Gateway. Defaults to true."
   type        = bool
   default     = true
 }
 
-variable "peer_requester" {
+variable peer_requester {
   description = "Optional : Map of maps of Peer Link requestors. The key is the name and the elements of the individual maps are peer_owner_id, peer_vpc_id, peer_cidr_blocks (list), and allow_remote_vpc_dns_resolution."
   type = map(object({
     peer_owner_id                   = string
@@ -463,7 +449,7 @@ variable "peer_requester" {
   default = {}
 }
 
-variable "peer_accepter" {
+variable peer_accepter {
   description = "Optional : Map of maps of Peer Link accepters. The key is the name and the elements of the individual maps are vpc_peering_connection_id, peer_cidr_blocks (list), allow_remote_vpc_dns_resolution."
   type = map(object({
     vpc_peering_connection_id       = string
@@ -473,7 +459,7 @@ variable "peer_accepter" {
   default = {}
 }
 
-variable "vpn_connections" {
+variable vpn_connections {
   description = "Optional : A map of a map with the settings for each VPN.  The key will be the name of the VPN"
   /*type        = map(object({
       peer_ip_address                      = string		# Required so not in default_vpn_connections
@@ -529,7 +515,7 @@ variable "vpn_connections" {
   default = {}
 }
 
-variable "default_vpn_connections" {
+variable default_vpn_connections {
   description = "Optional : This defines the default values for each map entry in vpn_connections. Only overide this if you want to change the defaults for all VPNs."
   /*type        = map(object(...)) */
   default = {
@@ -586,13 +572,13 @@ variable "default_vpn_connections" {
   }
 }
 
-variable "dx_bgp_default_route" {
+variable dx_bgp_default_route {
   description = "Optional : A boolean flag that indicates that the default gateway will be advertised via bgp over Direct Connect and causes the script to not default routes to the NAT Gateways."
   type        = bool
   default     = false
 }
 
-variable "zones" {
+variable zones {
   description = "Optional : AWS Regions and Availability Zones"
   type        = map(list(string))
   default = {

@@ -6,7 +6,7 @@ output "vpc_id" {
 
 output "vpc_name" {
   description = "string : The name of the VPC"
-  value       = format("%s", var.vpc-name == "null" ? "${var.name-vars["account"]}-${replace(var.region, "-", "")}-${var.name-vars["name"]}" : var.vpc-name)
+  value       = local.vpc_name
 }
 
 output "subnet_ids" {

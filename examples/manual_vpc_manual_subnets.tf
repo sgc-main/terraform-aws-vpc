@@ -19,7 +19,7 @@ variable "vpc-cidrs" {
 
 variable "name-vars" {
   default = {
-    account = "geek37"
+    account = "tst"
     name    = "dev"
   }
 }

@@ -22,7 +22,7 @@ variable zones {
 
 variable name-vars {
   default = {
-    account = "geek37"
+    account = "tst"
     name    = "dev"
   }
 }

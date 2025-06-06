@@ -3,8 +3,8 @@
       variable "name-vars" {
         type = map(string)
         default = {
-          account = "geek37"
-          name = "dev"
+          account = "tst"
+          name    = "dev"
         }
       }
    ```
@@ -28,9 +28,9 @@
    variable "route53_resolver_rules" {
      default =[
        {
-          domain_name = "geek37.com"
+          domain_name = "tst.com"
           rule_type   = "FORWARD"
-          name        = "geek37_com"
+          name        = "tst_com"
           target_ip   = {
             us-east-1 = [
               {
@@ -43,7 +43,7 @@
             ]
           }
           tags        = {
-            example   = "Geek37.com DNS Forwarder"
+            example   = "tst.com DNS Forwarder"
           }
        }
      ]
@@ -61,17 +61,13 @@
      }))
      default = [
         {
-            name                = "storage-gateway-endpoint"
             subnets             = ["mgt"]
-            service             = "com.amazonaws.<REGION>.storagegateway"
-            security_group      = "sg-123456789"
+            service             = "storage-gateway"
             private_dns_enabled = true
         },
         {
-            name                = "execute-api-endpoint"
             subnet              = ["subnet-1234567890abcdef12"]
-            service             = "com.amazonaws.<REGION>.execute-api"
-            security_group      = "sg-123456789|sg-987654321"
+            service             = "execute-api"
             private_dns_enabled = true
         }
       ]
